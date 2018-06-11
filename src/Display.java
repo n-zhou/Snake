@@ -22,6 +22,11 @@ public class Display extends JPanel implements KeyListener, ActionListener {
         timer.start();
     }
 
+    /**
+     * draws the game
+     * @param g 
+     * @see JPanel
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -29,10 +34,13 @@ public class Display extends JPanel implements KeyListener, ActionListener {
         /* draw the background */
         for (int i = 0; i <= 300; i += 20) {
             for (int j = 0; j <= 300; j += 20) {
+                /* first checker */
                 g.setColor(Color.BLACK);
                 g.fillRect(i,j,10,10);
                 g.fillRect(i+10,j+10,10,10);
-                //g.setColor(Color.MAGENTA);
+
+                /* second checker */
+                g.setColor(Color.BLACK);
                 g.fillRect(i,j+10,10,10);
                 g.fillRect(i+10,j,10,10);
             }
@@ -53,37 +61,48 @@ public class Display extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println(e.getKeyChar());
-        switch (e.getKeyChar()) {
-            case 'W':
-            case 'w':
-                snake.setDirection(0);
-                break;
-            case 'D':
-            case 'd':
-                snake.setDirection(1);
-                break;
-            case 'S':
-            case 's':
-                snake.setDirection(2);
-                break;
-            case 'A':
-            case 'a':
-                snake.setDirection(3);
-                break;
-        }
+
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_PAUSE) {
+            /* toggle game pause */
             if (timer.isRunning())
                 timer.stop();
             else
                 timer.start();
         }
         if (e.getKeyCode() == KeyEvent.VK_Y) {
+            /* print the position of the snake parts */
             snake.print();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            /* restart the game if it's over */
+            if (snake.over()) {
+                snake = new Snake();
+                snake.addPart();
+            }
+        }
+
+        /* update the heading of the snake */
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_W:
+            case KeyEvent.VK_UP:
+                snake.setDirection(0);
+                break;
+            case KeyEvent.VK_D:
+            case KeyEvent.VK_RIGHT:
+                snake.setDirection(1);
+                break;
+            case KeyEvent.VK_S:
+            case KeyEvent.VK_DOWN:
+                snake.setDirection(2);
+                break;
+            case KeyEvent.VK_A:
+            case KeyEvent.VK_LEFT:
+                snake.setDirection(3);
+                break;
         }
     }
 

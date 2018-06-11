@@ -26,6 +26,10 @@ public class SnakePart {
         this.direction = direction;
     }
 
+    /**
+     * draws the snake onto the screen
+     * @param g the device used to draw the snake
+     */
     public synchronized void draw(Graphics g) {
         g.setColor(Color.GREEN.darker().darker());
         g.fillRect((int)position.getX()+1,(int)position.getY()+1,8,8);
@@ -34,9 +38,16 @@ public class SnakePart {
         }
     }
 
+    /**
+     * update moves the position of the snake part and it's successor
+     */
     public synchronized void update() {
 
         direction = (queue.isEmpty()) ? direction : queue.poll();
+        if (next != null) {
+            next.update();
+            next.setDirection(direction);
+        }
         switch (direction) {
             case UP:
                 position.translate(0,-10);
@@ -53,21 +64,29 @@ public class SnakePart {
         }
         position.setLocation((int)Math.abs(position.getX() + 310)%310,
                                 (int)Math.abs(position.getY() + 310)%310);
-        if (next != null) {
-            next.update();
-            next.setDirection(direction);
-        }
-
     }
 
+    /**
+     * checks whether the snake ate itself
+     * @return <tt>true</tt> if the this part or it's successor overlaps with any other part. <tt> false</tt>
+     * otherwise.
+     */
     public boolean cannabalised() {
         return (next != null) ? next.cannabalised(position) : false;
     }
 
+    /**
+     * checks if the snake part or it's successor overlaps this point
+     * @param  p the point we are checking for overlap
+     * @return   <tt>true</tt> if this part or it's successor overlaps with p. <tt>false</tt> otherwise.
+     */
     public boolean cannabalised(Point p) {
         return (next == null) ? p.equals(position) : p.equals(position) || next.cannabalised(p);
     }
 
+    /**
+     * adds a snake part after the tail
+     */
     public void addPart() {
         if (next != null) {
             next.addPart();
@@ -84,6 +103,10 @@ public class SnakePart {
         }
     }
 
+    /**
+     * attempts to change the direction of the snake part
+     * @param direction the new direction of the snake
+     */
     public synchronized void setDirection(int direction) {
         if (queue.isEmpty()) {
             if (Math.abs(this.direction-direction) != 2)
@@ -94,10 +117,18 @@ public class SnakePart {
 
     }
 
+    /**
+     * calls translate() on the Point.
+     * @param dx
+     * @param dy
+     */
     public void translate(int dx, int dy) {
         position.translate(dx, dy);
     }
 
+    /**
+     * prints the position of the snake and it's heading
+     */
     public void print() {
         System.out.printf("%s %d\n", position, direction);
         if (next != null) {
